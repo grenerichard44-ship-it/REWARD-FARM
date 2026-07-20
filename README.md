@@ -5,9 +5,7 @@ Two independent Next.js applications backed by one Supabase project:
 - `apps/user-app` — Farm World, Campaign City, structured Work view, Farm Vault and read-only Farm Guide.
 - `apps/admin-platform` — campaign/task operations, exceptional manual fallback, payout notifications, invited users, Guide moderation, admins and audit log.
 
-
-
-## LOCAL LINK
+## Local development
 
 ```bash
 npm install
@@ -24,3 +22,9 @@ npm run build
 ```
 
 Apply `supabase/migrations/001_reward_farm_core.sql` to the single shared Supabase project. Sensitive tally writes, completion approval, verification ingestion and AI Guide calls belong in server-only functions using the service role.
+
+## Vercel
+
+This repository must be deployed as two separate Vercel projects. See
+[DEPLOYMENT.md](DEPLOYMENT.md) for the exact Root Directories, environment
+variables, and verification checklist.
