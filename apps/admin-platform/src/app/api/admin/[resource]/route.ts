@@ -29,7 +29,7 @@ export async function GET(req:NextRequest,{params}:{params:Promise<{resource:str
    ]);
    return NextResponse.json({metrics:{users:users.count||0,tasks:tasks.count||0,payouts:payouts.count||0,reviews:reviews.count||0},campaigns:campaigns.data||[]});
   }
-  let q=ctx.db.from(c.table).select(c.select).order(resource==="settings"?"updated_at":"created_at",{ascending:false});
+  const q=ctx.db.from(c.table).select(c.select).order(resource==="settings"?"updated_at":"created_at",{ascending:false});
   const {data,error}=await q.limit(250); if(error)throw error; return NextResponse.json(data||[]);
  }catch(e){return responseError(e);}
 }
