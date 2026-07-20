@@ -21,6 +21,6 @@ export async function requireAdmin(req:NextRequest, superOnly=false){
  if(!admin || (superOnly&&admin.role!=="super_admin")) return null;
  return {user,admin,db};
 }
-export async function audit(db:any,actor:string,action:string,targetType:string,targetId?:string,details:Record<string,unknown>={}){
+export async function audit(db:ReturnType<typeof adminClient>,actor:string,action:string,targetType:string,targetId?:string,details:Record<string,unknown>={}){
  await db.from("audit_log").insert({actor_id:actor,action,target_type:targetType,target_id:targetId||null,details});
 }
