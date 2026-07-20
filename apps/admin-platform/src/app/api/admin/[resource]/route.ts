@@ -60,7 +60,7 @@ export async function POST(req:NextRequest,{params}:{params:Promise<{resource:st
    return NextResponse.json(created,{status:201});
   }
   const {data,error}=await ctx.db.from(c.table).insert(body).select(c.select).single(); if(error)throw error;
-  await audit(ctx.db,ctx.admin.id,`${resource}.created`,c.table,data.id);
+  await audit(ctx.db,ctx.admin.id,`${resource}.created`,c.table,(data as unknown as {id?:string}).id);
   return NextResponse.json(data,{status:201});
  }catch(e){return responseError(e);}
 }
