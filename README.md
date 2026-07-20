@@ -5,11 +5,9 @@ Two independent Next.js applications backed by one Supabase project:
 - `apps/user-app` — Farm World, Campaign City, structured Work view, Farm Vault and read-only Farm Guide.
 - `apps/admin-platform` — campaign/task operations, exceptional manual fallback, payout notifications, invited users, Guide moderation, admins and audit log.
 
-## Product rules
 
-GEM COIN is an internal points tally with no exchange rate. The app does not process payments, perform FX conversion, automate crypto/bank transfers, provide a marketplace, or accept screenshot proof. Automatic provider signals are the default completion path. A short note/link is available only for exceptional manual tasks.
 
-## Run locally
+## LOCAL LINK
 
 ```bash
 npm install
