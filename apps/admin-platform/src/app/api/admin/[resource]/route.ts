@@ -43,7 +43,22 @@ export async function POST(req:NextRequest,{params}:{params:Promise<{resource:st
    if(error)throw error; return NextResponse.json(data);
   }
   if(resource==="campaigns")body.created_by=ctx.admin.id;
-  if(resource==="admins"){return responseError("Use an administrator invitation flow",400);}
+  if(resource==="users"){
+   const {data,error}=await ctx.db.auth.admin.inviteUserByEmail(body.email,{data:{display_name:body.display_name||body.email}});
+   if(error)throw error;
+   if(data.user)await ctx.db.from("profiles").upsert({id:data.user.id,display_name:body.display_name||body.email,status:"active"});
+   await audit(ctx.db,ctx.admin.id,"user.invited","profile",data.user?.id,{email:body.email});
+   return NextResponse.json(data.user,{status:201});
+  }
+  if(resource==="admins"){
+   const {data,error}=await ctx.db.auth.admin.inviteUserByEmail(body.email,{data:{display_name:body.display_name||body.email}});
+   if(error)throw error;
+   if(!data.user)throw new Error("Invitation did not create a user");
+   const {data:created,error:createError}=await ctx.db.from("admin_users").insert({user_id:data.user.id,role:body.role||"admin",invited_by:ctx.admin.id}).select().single();
+   if(createError)throw createError;
+   await audit(ctx.db,ctx.admin.id,"admin.invited","admin_user",created.id,{email:body.email,role:created.role});
+   return NextResponse.json(created,{status:201});
+  }
   const {data,error}=await ctx.db.from(c.table).insert(body).select(c.select).single(); if(error)throw error;
   await audit(ctx.db,ctx.admin.id,`${resource}.created`,c.table,data.id);
   return NextResponse.json(data,{status:201});
@@ -53,12 +68,12 @@ export async function PATCH(req:NextRequest,{params}:{params:Promise<{resource:s
  try{
   const {resource}=await params; const c=config[resource]; if(!c)return responseError("Unknown resource",404);
   const ctx=await requireAdmin(req,!!c.super); if(!ctx)return responseError("Unauthorized",401);
-  const {id,...changes}=await req.json(); if(!id)return responseError("id is required",400);
+  const {id,...changes}=await req.json(); if(!id)return responseError("id is required",400); const primaryKey=resource==="settings"?"key":"id";
   if(resource==="tasks"){
    const {data:old}=await ctx.db.from("tasks").select("*").eq("id",id).single();
    if(old){await ctx.db.from("task_versions").upsert({task_id:id,version:old.current_version,snapshot:old,created_by:ctx.admin.id},{onConflict:"task_id,version"}); changes.current_version=(old.current_version||1)+1;}
   }
-  const {data,error}=await ctx.db.from(c.table).update(changes).eq("id",id).select(c.select).single(); if(error)throw error;
+  const {data,error}=await ctx.db.from(c.table).update(changes).eq(primaryKey,id).select(c.select).single(); if(error)throw error;
   await audit(ctx.db,ctx.admin.id,`${resource}.updated`,c.table,id,changes);
   return NextResponse.json(data);
  }catch(e){return responseError(e);}
