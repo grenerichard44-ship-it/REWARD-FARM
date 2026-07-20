@@ -1,0 +1,23 @@
+{
+  "name": "reward-farm-system",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=apps/admin-platform\" \"npm run dev --workspace=apps/user-app\"",
+    "build": "npm run build --workspaces --if-present",
+    "db:init": "supabase init",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:migrate": "supabase db push",
+    "db:reset": "supabase db reset",
+    "db:generate:types": "supabase gen types typescript --local > packages/shared/src/database.types.ts"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.5.0"
+  }
+}
