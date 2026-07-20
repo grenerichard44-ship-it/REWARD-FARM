@@ -7,7 +7,7 @@ export function supabaseBrowser(){
  if(!client) client=createClient(url,key);
  return client;
 }
-export async function authHeaders(){
+export async function authHeaders():Promise<Record<string,string>>{
  const supabase=supabaseBrowser();
  const {data}=await supabase?.auth.getSession() || {data:{session:null}};
  return data.session?{Authorization:`Bearer ${data.session.access_token}`}:{};
