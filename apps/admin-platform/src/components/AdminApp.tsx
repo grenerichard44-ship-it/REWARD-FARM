@@ -9,7 +9,7 @@ export type Section="dashboard"|"campaigns"|"tasks"|"review"|"payouts"|"users"|"
 type Row=Record<string,any>;
 const nav=[["/","Dashboard","▦"],["/campaigns","Campaigns","◉"],["/tasks","Tasks","✓"],["/review","Manual fallback","!"],["/payouts","Payout requests","◆"],["/users","Invited users","♙"],["/guide","AI Guide","✦"],["/admins","Admin accounts","♜"],["/audit","Audit log","≡"],["/settings","Settings","⚙"]];
 async function api(resource:string,init:RequestInit={}){
- const headers={...(await authHeaders()),"Content-Type":"application/json",...(init.headers||{})};
+ const headers=new Headers(init.headers); headers.set("Content-Type","application/json"); for(const [key,value] of Object.entries(await authHeaders()))headers.set(key,value);
  const r=await fetch(`/api/admin/${resource}`,{...init,headers});
  if(!r.ok){const b=await r.json().catch(()=>({}));throw new Error(b.error||`Request failed (${r.status})`);}
  return r.status===204?null:r.json();
