@@ -2,5 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "npm run build --workspace=apps/admin-platform",
-  "outputDirectory": "apps/admin-platform/.next"
+  "outputDirectory": "apps/admin-platform/.next",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://gqnshjixcqnktgpgsvdt.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_n4Mw9NWaQ4w45ChJUxa7LQ_GjwOlH5y"
+  }
 }
